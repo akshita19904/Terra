@@ -5,6 +5,7 @@ import { WaypointModule } from './WaypointModule';
 import { CivicPulsePage } from './CivicPulsePage';
 import { SentinelPage } from './SentinelPage';
 import { ParkingPage } from './ParkingPage';
+import { UserProfilePage } from './UserProfilePage';
 import { ToastContainer, ToastMessage } from '../components/common/Toast';
 
 interface DashboardProps {
@@ -38,7 +39,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary text-gray-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0F172A] text-[#F8FAFC] flex flex-col font-sans">
       <Header
         onTriggerSos={handleTriggerSos}
         isRealtimeConnected={isRealtimeConnected}
@@ -54,6 +55,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         {activeModule === 'civicpulse' && <CivicPulsePage />}
         {activeModule === 'sentinel' && <SentinelPage />}
         {activeModule === 'parking' && <ParkingPage />}
+        {activeModule === 'profile' && <UserProfilePage user={user} onNavigateModule={setActiveModule} />}
       </main>
 
       <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />

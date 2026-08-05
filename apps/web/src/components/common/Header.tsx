@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, AlertTriangle, Zap, WifiOff, LogOut, Terminal, Code, Layers } from 'lucide-react';
+import { Compass, AlertTriangle, Zap, WifiOff, LogOut, Terminal, Code, User } from 'lucide-react';
 import { useDevMode } from '../../context/DevModeContext';
 
 interface HeaderProps {
@@ -88,16 +88,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Sentinel
           </button>
-          <button
-            onClick={() => onSelectModule('parking')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeModule === 'parking'
-                ? 'bg-[#2563EB] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
-            }`}
-          >
-            Smart Parking
-          </button>
         </nav>
       </div>
 
@@ -146,19 +136,25 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="hidden sm:inline">SOS</span>
         </button>
 
-        {/* Profile Avatar */}
+        {/* Profile Avatar Button */}
         <div className="flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-lg bg-[#273449] border border-[#334155] flex items-center justify-center text-xs font-bold text-[#F8FAFC]"
+          <button
+            onClick={() => onSelectModule('profile')}
+            className={`w-8 h-8 rounded-lg border flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
+              activeModule === 'profile'
+                ? 'bg-[#2563EB] text-white border-[#2563EB] ring-2 ring-[#3B82F6]/50'
+                : 'bg-[#273449] border-[#334155] text-[#F8FAFC] hover:border-[#3B82F6]'
+            }`}
             aria-label={`User Profile: ${firstName} ${lastName}`}
+            title="View User Profile & Account Settings"
           >
             {initials}
-          </div>
+          </button>
 
           {onLogout && (
             <button
               onClick={onLogout}
-              className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/5 transition-colors cursor-pointer"
               aria-label="Log out"
               title="Log Out"
             >
