@@ -6,6 +6,7 @@ import { CandidatesList } from '../components/rides/CandidatesList';
 import { AnalyticsDashboard } from '../components/analytics/AnalyticsDashboard';
 import { ConfirmationModal } from '../components/common/ConfirmationModal';
 import { ToastContainer, ToastMessage } from '../components/common/Toast';
+import { RideLifecycleStepper, RideState } from '../components/rides/RideLifecycleStepper';
 import { CandidateMatch } from '../types';
 
 interface DashboardProps {
@@ -21,6 +22,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const [selectedMatch, setSelectedMatch] = useState<CandidateMatch | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [currentRideState, setCurrentRideState] = useState<RideState>('CREATED');
 
   const [currentOrigin, setCurrentOrigin] = useState<{ lat: number; lng: number; address?: string }>({
     lat: 13.0827,
@@ -92,6 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
   const handleFindMatches = (payload: any) => {
     setIsLoading(true);
+    setCurrentRideState('SEARCHING');
     if (payload.pickup) setCurrentOrigin(payload.pickup);
     if (payload.dropoff) setCurrentDest(payload.dropoff);
 
@@ -120,6 +123,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
       setCandidates(validCandidates);
       setIsLoading(false);
+      setCurrentRideState('MATCHED');
       addToast(
         'success',
         'Optimization Sweep Complete',
@@ -131,6 +135,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const handleConfirmMatch = (match: CandidateMatch) => {
     setSelectedMatch(match);
     setIsModalOpen(true);
+    setCurrentRideState('ACCEPTED');
   };
 
   const handleTriggerSos = () => {
@@ -185,6 +190,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             🇮🇳 Region: Bengaluru & Indian Metro Corridors
           </div>
         </div>
+
+        {/* Ride Lifecycle State Stepper */}
+        <RideLifecycleStepper currentState={currentRideState} />
 
         {activeTab === 'matching' ? (
           <div className="grid grid-cols-12 gap-6">

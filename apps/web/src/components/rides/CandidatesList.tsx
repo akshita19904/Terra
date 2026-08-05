@@ -1,6 +1,6 @@
 import React from 'react';
 import { CandidateMatch } from '../../types';
-import { Star, Clock, Navigation, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Star, Clock, Navigation, CheckCircle2, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 
 interface CandidatesListProps {
   candidates: CandidateMatch[];
@@ -24,14 +24,26 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({ candidates, onCo
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-mint" aria-hidden="true" /> Evaluated Matches ({candidates.length})
-        </h3>
-        <span className="text-xs text-gray-300 font-medium">Ranked by best overall match</span>
+      {/* Matching Pipeline Header & Badge */}
+      <div className="glass-panel p-3 rounded-xl border border-darkBorder space-y-1.5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold text-white flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-mint" aria-hidden="true" /> Evaluated Matches ({candidates.length})
+          </h3>
+          <span className="text-[11px] text-mint font-semibold">7-Stage Pipeline Sweep</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-mono text-gray-300 overflow-x-auto pb-0.5">
+          <span className="px-2 py-0.5 rounded bg-bg-primary border border-darkBorder">1. PostGIS Pruned</span>
+          <span>→</span>
+          <span className="px-2 py-0.5 rounded bg-bg-primary border border-darkBorder">2. Time Filtered</span>
+          <span>→</span>
+          <span className="px-2 py-0.5 rounded bg-bg-primary border border-darkBorder">3. CosSim Trajectory</span>
+          <span>→</span>
+          <span className="px-2 py-0.5 rounded bg-bg-primary border border-darkBorder">4. S(d,p) Ranked</span>
+        </div>
       </div>
 
-      <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1" role="list">
+      <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1" role="list">
         {candidates.map((match, idx) => (
           <div
             key={match.offerId}
@@ -50,20 +62,20 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({ candidates, onCo
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
                     {match.driverName}
                     <span
-                      className="flex items-center text-xs text-amber-400 font-bold gap-0.5"
-                      aria-label={`Driver rating ${match.driverTrustScore.toFixed(2)} out of 5 stars`}
+                      className="flex items-center text-xs text-amber-400 font-bold gap-0.5 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/30"
+                      aria-label={`Structured Trust Score ${match.driverTrustScore.toFixed(2)} out of 5.00`}
                     >
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
-                      {match.driverTrustScore.toFixed(2)}
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+                      Trust Score: {match.driverTrustScore.toFixed(2)} / 5.00
                     </span>
                   </h4>
-                  <p className="text-xs text-gray-300 font-medium">
-                    {match.vehicleMakeModel} • {match.availableCapacity} seats open
+                  <p className="text-xs text-gray-300 font-medium mt-0.5">
+                    {match.vehicleMakeModel} • {match.availableCapacity} seats open • Verified Driver
                   </p>
                 </div>
               </div>
 
-              {/* Rounded Match Score Badge (95% instead of 94.8%) */}
+              {/* Match Score Badge */}
               <div className="text-right">
                 <div className="text-xs font-bold px-3 py-1 rounded-full bg-mint/20 text-mint border border-mint/40 inline-flex items-center gap-1 shadow-xs">
                   <span>Match Score:</span>

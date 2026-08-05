@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, AlertTriangle, Zap, WifiOff, LogOut } from 'lucide-react';
+import { Compass, AlertTriangle, Zap, WifiOff, LogOut, Database, Clock } from 'lucide-react';
 
 interface HeaderProps {
   onTriggerSos: () => void;
@@ -33,7 +33,19 @@ export const Header: React.FC<HeaderProps> = ({ onTriggerSos, isRealtimeConnecte
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {/* Redis Telemetry & Job Status Badges */}
+        <div className="hidden lg:flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-bg-secondary border border-darkBorder text-gray-300">
+            <Database className="w-3.5 h-3.5 text-mint" aria-hidden="true" />
+            <span>Redis GeoPings (3s)</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-bg-secondary border border-darkBorder text-gray-300">
+            <Clock className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+            <span>Expiry Scheduler</span>
+          </div>
+        </div>
+
         {/* Real-time Status Badge */}
         <div
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold ${
