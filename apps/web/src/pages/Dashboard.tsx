@@ -4,13 +4,19 @@ import { MapboxView } from '../components/map/MapboxView';
 import { RequestWizard } from '../components/rides/RequestWizard';
 import { CandidatesList } from '../components/rides/CandidatesList';
 import { AnalyticsDashboard } from '../components/analytics/AnalyticsDashboard';
+import { ConfirmationModal } from '../components/common/ConfirmationModal';
+import { ToastContainer, ToastMessage } from '../components/common/Toast';
 import { CandidateMatch } from '../types';
 
 export const Dashboard: React.FC = () => {
-  const [isRealtimeConnected, setIsRealtimeConnected] = useState(true);
+  const [isRealtimeConnected] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [candidates, setCandidates] = useState<CandidateMatch[]>([]);
   const [activeTab, setActiveTab] = useState<'matching' | 'analytics'>('matching');
+  const [selectedMatch, setSelectedMatch] = useState<CandidateMatch | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
   const [currentOrigin, setCurrentOrigin] = useState<{ lat: number; lng: number; address?: string }>({
     lat: 13.0827,
     lng: 77.5900,
@@ -22,12 +28,23 @@ export const Dashboard: React.FC = () => {
     address: 'Brigade El Dorado, Aerospace Park, Bengaluru',
   });
 
+  const addToast = (type: ToastMessage['type'], title: string, message: string) => {
+    const id = `toast_${Date.now()}`;
+    setToasts((prev) => [...prev, { id, type, title, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 4000);
+  };
+
+  const handleDismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
   const handleFindMatches = (payload: any) => {
     setIsLoading(true);
     if (payload.pickup) setCurrentOrigin(payload.pickup);
     if (payload.dropoff) setCurrentDest(payload.dropoff);
 
-    // Simulate PostGIS spatial candidate evaluation run for Indian routes
     setTimeout(() => {
       setCandidates([
         {
@@ -43,7 +60,7 @@ export const Dashboard: React.FC = () => {
           estimatedDetourMeters: 1800,
           estimatedPickupTime: new Date(Date.now() + 8 * 60000).toISOString(),
           estimatedDropoffTime: new Date(Date.now() + 28 * 60000).toISOString(),
-          estimatedFare: 180, // INR
+          estimatedFare: 180,
         },
         {
           offerId: 'offer_in_2',
@@ -58,7 +75,7 @@ export const Dashboard: React.FC = () => {
           estimatedDetourMeters: 2900,
           estimatedPickupTime: new Date(Date.now() + 12 * 60000).toISOString(),
           estimatedDropoffTime: new Date(Date.now() + 35 * 60000).toISOString(),
-          estimatedFare: 240, // INR
+          estimatedFare: 240,
         },
         {
           offerId: 'offer_in_3',
@@ -73,19 +90,25 @@ export const Dashboard: React.FC = () => {
           estimatedDetourMeters: 3400,
           estimatedPickupTime: new Date(Date.now() + 16 * 60000).toISOString(),
           estimatedDropoffTime: new Date(Date.now() + 40 * 60000).toISOString(),
-          estimatedFare: 210, // INR
+          estimatedFare: 210,
         },
       ]);
       setIsLoading(false);
+      addToast('success', 'Optimization Sweep Complete', 'Ranked 3 candidates for your Indian route.');
     }, 900);
   };
 
   const handleConfirmMatch = (match: CandidateMatch) => {
-    alert(`🎉 Commute Match Confirmed with ${match.driverName}! (${match.vehicleMakeModel}) for ₹${match.estimatedFare}`);
+    setSelectedMatch(match);
+    setIsModalOpen(true);
   };
 
   const handleTriggerSos = () => {
-    alert('🚨 EMERGENCY SOS BROADCAST: High priority location signal sent to Terra India Emergency Dispatchers!');
+    addToast(
+      'emergency',
+      'Emergency SOS Broadcast',
+      'High-priority location signal sent to Terra Dispatchers and emergency contacts.'
+    );
   };
 
   return (
@@ -95,8 +118,10 @@ export const Dashboard: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         {/* Navigation Mode Tabs */}
         <div className="flex items-center justify-between border-b border-darkBorder pb-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" role="tablist">
             <button
+              role="tab"
+              aria-selected={activeTab === 'matching'}
               onClick={() => setActiveTab('matching')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'matching'
@@ -104,10 +129,12 @@ export const Dashboard: React.FC = () => {
                   : 'bg-bg-secondary text-gray-400 hover:text-white border border-darkBorder'
               }`}
             >
-              Intelligent Ride Matching (India)
+              Intelligent Ride Matching
             </button>
 
             <button
+              role="tab"
+              aria-selected={activeTab === 'analytics'}
               onClick={() => setActiveTab('analytics')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'analytics'
@@ -141,6 +168,16 @@ export const Dashboard: React.FC = () => {
           <AnalyticsDashboard />
         )}
       </main>
+
+      {/* Structured Dark Glassmorphic Dialog Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        match={selectedMatch}
+        onClose={() => setIsModalOpen(false)}
+      />
+
+      {/* Custom Toast Container */}
+      <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
     </div>
   );
 };
