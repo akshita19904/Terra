@@ -1,6 +1,6 @@
 import React from 'react';
 import { CandidateMatch } from '../../types';
-import { Star, ShieldCheck, Clock, Navigation, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Star, Clock, Navigation, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface CandidatesListProps {
   candidates: CandidateMatch[];
@@ -16,7 +16,7 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({ candidates, onCo
         </div>
         <h3 className="text-base font-bold text-white mb-1">No Active Match Sweep Run Yet</h3>
         <p className="text-xs text-gray-400 max-w-sm mx-auto">
-          Submit your commute details above to execute the PostGIS spatial candidate evaluation pipeline.
+          Submit your commute details above to execute the PostGIS spatial candidate evaluation pipeline for Indian routes.
         </p>
       </div>
     );
@@ -92,8 +92,8 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({ candidates, onCo
                 <span className="block text-[10px] text-gray-400 uppercase tracking-wider">
                   Calculated Fare
                 </span>
-                <span className="font-extrabold text-mint mt-0.5">
-                  ${match.estimatedFare.toFixed(2)}
+                <span className="font-extrabold text-mint mt-0.5 text-sm">
+                  ₹{match.estimatedFare.toFixed(0)}
                 </span>
               </div>
             </div>
