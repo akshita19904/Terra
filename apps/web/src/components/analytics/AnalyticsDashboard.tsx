@@ -1,100 +1,76 @@
 import React from 'react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
-import { TrendingUp, Leaf, Car, ShieldCheck } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart3, TrendingUp, ShieldCheck, Leaf } from 'lucide-react';
 
 const mockAnalyticsData = [
-  { time: '08:00', matches: 12, co2SavedKg: 45, detourSavedMins: 110 },
-  { time: '09:00', matches: 28, co2SavedKg: 112, detourSavedMins: 240 },
-  { time: '10:00', matches: 18, co2SavedKg: 78, detourSavedMins: 165 },
-  { time: '11:00', matches: 15, co2SavedKg: 62, detourSavedMins: 130 },
-  { time: '12:00', matches: 22, co2SavedKg: 95, detourSavedMins: 190 },
-  { time: '13:00', matches: 35, co2SavedKg: 150, detourSavedMins: 310 },
+  { time: '06:00', matches: 120, co2SavedKg: 45 },
+  { time: '08:00', matches: 450, co2SavedKg: 180 },
+  { time: '10:00', matches: 320, co2SavedKg: 130 },
+  { time: '12:00', matches: 210, co2SavedKg: 85 },
+  { time: '14:00', matches: 280, co2SavedKg: 110 },
+  { time: '16:00', matches: 540, co2SavedKg: 220 },
+  { time: '18:00', matches: 680, co2SavedKg: 275 },
+  { time: '20:00', matches: 390, co2SavedKg: 155 },
 ];
 
 export const AnalyticsDashboard: React.FC = () => {
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-darkBorder space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-mint" /> Commute Optimization Analytics
+    <div className="space-y-6 animate-in fade-in duration-150">
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8] flex items-center gap-1">
+            <TrendingUp className="w-3.5 h-3.5 text-[#3B82F6]" /> Match Efficiency
+          </span>
+          <div className="text-2xl font-bold text-[#F8FAFC] font-mono">94.6%</div>
+          <span className="text-xs text-[#16A34A] font-medium">Optimal trajectory alignment</span>
+        </div>
+
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8] flex items-center gap-1">
+            <Leaf className="w-3.5 h-3.5 text-[#16A34A]" /> Daily CO₂ Saved
+          </span>
+          <div className="text-2xl font-bold text-[#16A34A] font-mono">1,200 kg</div>
+          <span className="text-xs text-[#94A3B8]">Commute pool reduction</span>
+        </div>
+
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8] flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#F59E0B]" /> Platform Trust Index
+          </span>
+          <div className="text-2xl font-bold text-[#F59E0B] font-mono">4.92 / 5.00</div>
+          <span className="text-xs text-[#94A3B8]">Verified passenger & driver ratings</span>
+        </div>
+      </div>
+
+      {/* Hourly Commute Operations Chart */}
+      <div className="card-slate p-6 space-y-4 border border-[#334155]">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-[#3B82F6]" /> Hourly Commute Match Volume & CO₂ Reduction
           </h3>
-          <p className="text-xs text-gray-400">Real-time aggregate platform impact and performance metrics</p>
-        </div>
-      </div>
-
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-bg-secondary/70 p-4 rounded-xl border border-darkBorder">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Leaf className="w-4 h-4 text-mint" /> CO2 Emissions Reduced
-          </span>
-          <div className="text-2xl font-extrabold text-white mt-1">
-            552 <span className="text-xs text-mint font-normal">kg CO₂</span>
-          </div>
+          <span className="text-xs text-[#94A3B8]">Live Telemetry Feed</span>
         </div>
 
-        <div className="bg-bg-secondary/70 p-4 rounded-xl border border-darkBorder">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Car className="w-4 h-4 text-mint" /> Vehicle Detours Saved
-          </span>
-          <div className="text-2xl font-extrabold text-white mt-1">
-            1,145 <span className="text-xs text-mint font-normal">mins</span>
-          </div>
+        <div className="h-64 w-full pt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={mockAnalyticsData}>
+              <defs>
+                <linearGradient id="colorMatches" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#2563EB" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#2563EB" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="time" stroke="#94A3B8" fontSize={11} />
+              <YAxis stroke="#94A3B8" fontSize={11} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#1E293B', borderColor: '#334155', borderRadius: '8px', color: '#F8FAFC' }}
+              />
+              <Area type="monotone" dataKey="matches" stroke="#3B82F6" strokeWidth={2} fillOpacity={1} fill="url(#colorMatches)" />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-
-        <div className="bg-bg-secondary/70 p-4 rounded-xl border border-darkBorder">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-mint" /> Ride Match Success
-          </span>
-          <div className="text-2xl font-extrabold text-white mt-1">
-            94.8% <span className="text-xs text-mint font-normal">+2.4%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Recharts Operations Graph */}
-      <div className="h-64 w-full bg-bg-secondary/40 p-4 rounded-xl border border-darkBorder">
-        <h4 className="text-xs font-semibold text-gray-300 mb-4">
-          Hourly Commute Matches & CO₂ Offset (Kg)
-        </h4>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={mockAnalyticsData}>
-            <defs>
-              <linearGradient id="mintGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#65F5C6" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#65F5C6" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
-            <XAxis dataKey="time" stroke="#9CA3AF" fontSize={11} />
-            <YAxis stroke="#9CA3AF" fontSize={11} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#0E1B2E',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                fontSize: '12px',
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="co2SavedKg"
-              stroke="#65F5C6"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#mintGradient)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
       </div>
     </div>
   );

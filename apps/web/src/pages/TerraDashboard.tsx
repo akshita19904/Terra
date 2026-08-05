@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Car, ShieldAlert, AlertCircle, ParkingCircle, BarChart3, ArrowRight, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { Compass, Car, ShieldAlert, AlertCircle, ParkingCircle, ArrowRight, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 
 interface TerraDashboardProps {
   onNavigateModule: (module: string) => void;
@@ -7,31 +7,31 @@ interface TerraDashboardProps {
 
 export const TerraDashboard: React.FC<TerraDashboardProps> = ({ onNavigateModule }) => {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-6 animate-in fade-in duration-150">
       {/* Platform Welcome Banner */}
-      <div className="glass-panel p-8 rounded-3xl border border-darkBorder relative overflow-hidden bg-gradient-to-r from-[#0E1B2E] via-[#0E1B2E]/90 to-[#07111F]">
+      <div className="card-slate p-8 relative overflow-hidden bg-gradient-to-r from-[#1E293B] to-[#0F172A]">
         <div className="max-w-2xl space-y-3 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mint/15 text-mint border border-mint/30 text-xs font-extrabold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#2563EB]/20 text-[#3B82F6] border border-[#2563EB]/30 text-xs font-semibold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" /> Terra Urban Operations Platform
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Intelligent Mobility & Connected Civic Systems
+          <h1 className="text-2xl font-bold text-[#F8FAFC] tracking-tight">
+            Intelligent Mobility & Connected Civic Operations
           </h1>
-          <p className="text-sm text-gray-300 leading-relaxed font-medium">
+          <p className="text-xs text-[#94A3B8] leading-relaxed font-normal">
             Terra unifies urban transport optimization with real-time civic infrastructure response.
-            Our flagship mobility module, <strong className="text-mint font-bold">Waypoint</strong>, is fully operational across Bengaluru metro corridors.
+            Our flagship mobility module, <strong className="text-[#F8FAFC] font-semibold">Waypoint</strong>, is fully operational across Bengaluru metro corridors.
           </p>
           <div className="pt-2 flex items-center gap-3">
             <button
               onClick={() => onNavigateModule('waypoint')}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-mint to-mint-hover text-bg-primary font-extrabold text-xs shadow-mintGlow hover:opacity-95 transition-all flex items-center gap-2 cursor-pointer"
+              className="btn-primary"
             >
               <span>Launch Waypoint Commute Engine</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => onNavigateModule('civicpulse')}
-              className="px-5 py-3 rounded-xl bg-bg-secondary hover:bg-white/5 border border-darkBorder text-gray-200 font-bold text-xs transition-all"
+              className="btn-secondary"
             >
               Explore CivicPulse
             </button>
@@ -41,61 +41,61 @@ export const TerraDashboard: React.FC<TerraDashboardProps> = ({ onNavigateModule
 
       {/* Platform Key Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="glass-card p-5 rounded-2xl border border-darkBorder space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Commutes Matched</span>
-          <div className="text-2xl font-extrabold text-white font-mono">14,280+</div>
-          <span className="text-xs text-mint font-semibold">↑ 18% this month</span>
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8]">Total Commutes Matched</span>
+          <div className="text-2xl font-bold text-[#F8FAFC] font-mono">14,280+</div>
+          <span className="text-xs text-[#16A34A] font-medium">↑ 18% this month</span>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-darkBorder space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">CO₂ Emissions Prevented</span>
-          <div className="text-2xl font-extrabold text-mint font-mono">3,850 kg</div>
-          <span className="text-xs text-gray-300 font-medium">Shared EV/Hybrid rides</span>
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8]">CO₂ Emissions Prevented</span>
+          <div className="text-2xl font-bold text-[#3B82F6] font-mono">3,850 kg</div>
+          <span className="text-xs text-[#94A3B8] font-normal">Shared EV/Hybrid rides</span>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-darkBorder space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Average Pickup Detour</span>
-          <div className="text-2xl font-extrabold text-white font-mono">4.2 Mins</div>
-          <span className="text-xs text-emerald-400 font-semibold">Optimized trajectory</span>
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8]">Average Pickup Detour</span>
+          <div className="text-2xl font-bold text-[#F8FAFC] font-mono">4.2 Mins</div>
+          <span className="text-xs text-[#16A34A] font-medium">Optimized trajectory</span>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-darkBorder space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Driver Trust Index</span>
-          <div className="text-2xl font-extrabold text-amber-400 font-mono">4.92 / 5.00</div>
-          <span className="text-xs text-gray-300 font-medium">Verified active drivers</span>
+        <div className="card-slate p-5 space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8]">Driver Trust Index</span>
+          <div className="text-2xl font-bold text-[#F59E0B] font-mono">4.92 / 5.00</div>
+          <span className="text-xs text-[#94A3B8] font-normal">Verified active drivers</span>
         </div>
       </div>
 
       {/* Platform Module Architecture Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Compass className="w-5 h-5 text-mint" /> Platform Modules Ecosystem
+          <h2 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+            <Compass className="w-4 h-4 text-[#3B82F6]" /> Platform Modules Ecosystem
           </h2>
-          <span className="text-xs text-gray-400 font-medium">Terra Operations Sitemap</span>
+          <span className="text-xs text-[#94A3B8]">Terra Operations Sitemap</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Flagship Module 1: Waypoint (100% Ready) */}
           <div
             onClick={() => onNavigateModule('waypoint')}
-            className="glass-panel p-6 rounded-2xl border border-mint/40 bg-mint/5 hover:border-mint transition-all cursor-pointer group relative overflow-hidden"
+            className="card-slate p-6 hover:border-[#2563EB] transition-all cursor-pointer group relative"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-mint/20 text-mint flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#2563EB]/10 text-[#3B82F6] flex items-center justify-center font-bold">
                 <Car className="w-5 h-5" />
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-mint text-bg-primary font-extrabold">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30 font-bold">
                 100% Production Ready
               </span>
             </div>
-            <h3 className="text-base font-bold text-white group-hover:text-mint transition-colors">
+            <h3 className="text-sm font-bold text-[#F8FAFC] group-hover:text-[#3B82F6] transition-colors">
               Waypoint Mobility
             </h3>
-            <p className="text-xs text-gray-300 mt-2 font-medium leading-relaxed">
+            <p className="text-xs text-[#94A3B8] mt-2 leading-relaxed">
               Flagship intelligent commute ride-matching engine, PostGIS spatial route alignment, live driver telemetry, and Rupee fare calculation.
             </p>
-            <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold text-mint">
+            <div className="mt-4 pt-3 border-t border-[#334155] flex items-center justify-between text-xs font-semibold text-[#3B82F6]">
               <span>Open Commute Console</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -104,23 +104,23 @@ export const TerraDashboard: React.FC<TerraDashboardProps> = ({ onNavigateModule
           {/* Module 2: CivicPulse (40% In Development) */}
           <div
             onClick={() => onNavigateModule('civicpulse')}
-            className="glass-panel p-6 rounded-2xl border border-darkBorder hover:border-gray-500 transition-all cursor-pointer group"
+            className="card-slate p-6 hover:border-[#475569] transition-all cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B] flex items-center justify-center font-bold">
                 <AlertCircle className="w-5 h-5" />
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 font-bold">
-                40% In Development
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 font-semibold">
+                40% Beta
               </span>
             </div>
-            <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors">
+            <h3 className="text-sm font-bold text-[#F8FAFC] group-hover:text-[#F59E0B] transition-colors">
               CivicPulse Operations
             </h3>
-            <p className="text-xs text-gray-300 mt-2 font-medium leading-relaxed">
+            <p className="text-xs text-[#94A3B8] mt-2 leading-relaxed">
               Crowdsourced infrastructure reporting, road damage telemetry, pothole verification, and municipal task dispatch workflow.
             </p>
-            <div className="mt-4 pt-4 border-t border-darkBorder flex items-center justify-between text-xs font-bold text-amber-400">
+            <div className="mt-4 pt-3 border-t border-[#334155] flex items-center justify-between text-xs font-semibold text-[#F59E0B]">
               <span>View Module Roadmap</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -129,23 +129,23 @@ export const TerraDashboard: React.FC<TerraDashboardProps> = ({ onNavigateModule
           {/* Module 3: Sentinel (25% Preview) */}
           <div
             onClick={() => onNavigateModule('sentinel')}
-            className="glass-panel p-6 rounded-2xl border border-darkBorder hover:border-gray-500 transition-all cursor-pointer group"
+            className="card-slate p-6 hover:border-[#475569] transition-all cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#DC2626]/10 text-[#DC2626] flex items-center justify-center font-bold">
                 <ShieldAlert className="w-5 h-5" />
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 font-bold">
-                25% In Development
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#DC2626]/20 text-[#DC2626] border border-[#DC2626]/30 font-semibold">
+                25% Alpha
               </span>
             </div>
-            <h3 className="text-base font-bold text-white group-hover:text-red-300 transition-colors">
+            <h3 className="text-sm font-bold text-[#F8FAFC] group-hover:text-[#DC2626] transition-colors">
               Sentinel Response
             </h3>
-            <p className="text-xs text-gray-300 mt-2 font-medium leading-relaxed">
+            <p className="text-xs text-[#94A3B8] mt-2 leading-relaxed">
               High-priority emergency SOS broadcasting, dispatcher telemetry console, and incident geo-fencing.
             </p>
-            <div className="mt-4 pt-4 border-t border-darkBorder flex items-center justify-between text-xs font-bold text-red-400">
+            <div className="mt-4 pt-3 border-t border-[#334155] flex items-center justify-between text-xs font-semibold text-[#DC2626]">
               <span>View SOS Preview</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>

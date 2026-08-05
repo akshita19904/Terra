@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, AlertTriangle, Zap, WifiOff, LogOut, Terminal, Code } from 'lucide-react';
+import { Compass, AlertTriangle, Zap, WifiOff, LogOut, Terminal, Code, Layers } from 'lucide-react';
 import { useDevMode } from '../../context/DevModeContext';
 
 interface HeaderProps {
@@ -25,76 +25,75 @@ export const Header: React.FC<HeaderProps> = ({
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
   return (
-    <header className="w-full glass-panel border-b border-darkBorder px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
+    <header className="w-full bg-[#1E293B] border-b border-[#334155] px-6 py-3 flex items-center justify-between sticky top-0 z-50 shadow-sm">
       {/* Brand & Module Nav */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-8">
         <button
           onClick={() => onSelectModule('dashboard')}
           className="flex items-center gap-3 text-left focus:outline-none group"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-mint-hover to-mint flex items-center justify-center shadow-mintGlow group-hover:scale-105 transition-transform">
-            <Compass className="w-6 h-6 text-bg-primary" aria-hidden="true" />
+          <div className="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center text-white font-bold shadow-sm">
+            <Compass className="w-5 h-5 text-white" aria-hidden="true" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold tracking-tight text-white">TERRA</h1>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint/20 text-mint border border-mint/40 font-extrabold tracking-wide uppercase">
-                Urban Operations Platform
+              <span className="text-base font-bold tracking-tight text-[#F8FAFC]">TERRA</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#2563EB]/20 text-[#3B82F6] border border-[#2563EB]/30 font-semibold uppercase tracking-wider">
+                Platform
               </span>
             </div>
-            <p className="text-xs text-gray-300 font-medium">Flagship: Waypoint Commute Engine</p>
           </div>
         </button>
 
         {/* Top Nav Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-bg-secondary/70 p-1 rounded-xl border border-darkBorder">
+        <nav className="hidden md:flex items-center gap-1 bg-[#0F172A] p-1 rounded-lg border border-[#334155]">
           <button
             onClick={() => onSelectModule('dashboard')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeModule === 'dashboard'
-                ? 'bg-mint text-bg-primary shadow-xs'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Dashboard
           </button>
           <button
             onClick={() => onSelectModule('waypoint')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${
               activeModule === 'waypoint'
-                ? 'bg-mint text-bg-primary shadow-xs'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             <span>Waypoint</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
           </button>
           <button
             onClick={() => onSelectModule('civicpulse')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeModule === 'civicpulse'
-                ? 'bg-mint text-bg-primary shadow-xs'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             CivicPulse
           </button>
           <button
             onClick={() => onSelectModule('sentinel')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeModule === 'sentinel'
-                ? 'bg-mint text-bg-primary shadow-xs'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Sentinel
           </button>
           <button
             onClick={() => onSelectModule('parking')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeModule === 'parking'
-                ? 'bg-mint text-bg-primary shadow-xs'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Smart Parking
@@ -107,30 +106,30 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Developer Mode Toggle Switch */}
         <button
           onClick={toggleDevMode}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
             isDevMode
-              ? 'bg-mint/20 border-mint/60 text-mint ring-1 ring-mint/40 shadow-mintGlow'
-              : 'bg-bg-secondary border-darkBorder text-gray-400 hover:text-white'
+              ? 'bg-[#2563EB]/20 border-[#2563EB] text-[#3B82F6] shadow-xs'
+              : 'bg-[#0F172A] border-[#334155] text-[#94A3B8] hover:text-[#F8FAFC]'
           }`}
-          title="Toggle Developer Telemetry Mode for Interview Inspections"
+          title="Toggle Developer Telemetry Mode for Technical Inspections"
         >
-          {isDevMode ? <Terminal className="w-3.5 h-3.5 text-mint" /> : <Code className="w-3.5 h-3.5" />}
-          <span>{isDevMode ? 'Dev Telemetry: ON' : 'Dev Mode'}</span>
+          {isDevMode ? <Terminal className="w-3.5 h-3.5 text-[#3B82F6]" /> : <Code className="w-3.5 h-3.5" />}
+          <span>{isDevMode ? 'Dev Telemetry: ON' : 'Developer Mode'}</span>
         </button>
 
         {/* Real-time Connection Status */}
         <div
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium ${
             isRealtimeConnected
-              ? 'bg-mint/15 border-mint/30 text-mint'
-              : 'bg-red-950/40 border-red-500/30 text-red-300'
+              ? 'bg-[#16A34A]/10 border-[#16A34A]/30 text-[#16A34A]'
+              : 'bg-[#DC2626]/10 border-[#DC2626]/30 text-[#DC2626]'
           }`}
           role="status"
         >
           {isRealtimeConnected ? (
-            <Zap className="w-3.5 h-3.5 text-mint animate-pulse" aria-hidden="true" />
+            <Zap className="w-3.5 h-3.5 text-[#16A34A]" aria-hidden="true" />
           ) : (
-            <WifiOff className="w-3.5 h-3.5 text-red-400" aria-hidden="true" />
+            <WifiOff className="w-3.5 h-3.5 text-[#DC2626]" aria-hidden="true" />
           )}
           <span className="hidden sm:inline">
             {isRealtimeConnected ? 'Live Connection' : 'Offline'}
@@ -140,17 +139,17 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Emergency SOS */}
         <button
           onClick={onTriggerSos}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600/30 hover:bg-red-600/40 text-red-200 border border-red-500/50 text-xs font-bold transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#DC2626]/20 hover:bg-[#DC2626]/30 text-[#DC2626] border border-[#DC2626]/40 text-xs font-semibold transition-all"
           aria-label="Emergency SOS"
         >
-          <AlertTriangle className="w-3.5 h-3.5 text-red-300" aria-hidden="true" />
+          <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
           <span className="hidden sm:inline">SOS</span>
         </button>
 
         {/* Profile Avatar */}
         <div className="flex items-center gap-2">
           <div
-            className="w-9 h-9 rounded-full bg-mint/15 border border-mint/40 flex items-center justify-center text-xs font-extrabold text-mint shadow-sm"
+            className="w-8 h-8 rounded-lg bg-[#273449] border border-[#334155] flex items-center justify-center text-xs font-bold text-[#F8FAFC]"
             aria-label={`User Profile: ${firstName} ${lastName}`}
           >
             {initials}
@@ -159,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onLogout && (
             <button
               onClick={onLogout}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/5 transition-colors"
               aria-label="Log out"
               title="Log Out"
             >
