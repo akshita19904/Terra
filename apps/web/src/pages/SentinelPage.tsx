@@ -1,47 +1,52 @@
 import React from 'react';
-import { ShieldAlert, AlertTriangle, Radio, PhoneCall } from 'lucide-react';
+import { ShieldAlert, Clock, Info } from 'lucide-react';
 
 export const SentinelPage: React.FC = () => {
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      <div className="glass-panel p-6 rounded-2xl border border-red-500/30 bg-red-500/5 flex items-center justify-between">
+    <div className="space-y-6 animate-in fade-in duration-150">
+      <div className="card-slate p-6 border border-[#F59E0B]/30 bg-[#F59E0B]/5 flex justify-between items-center">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-white">Sentinel Emergency Response</h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 font-bold">
-              25% Complete — Emergency SOS Preview
+            <h1 className="text-xl font-bold text-[#F8FAFC]">Sentinel Emergency Response</h1>
+            <span className="text-[10px] px-2.5 py-0.5 rounded bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 font-semibold">
+              Under Construction
             </span>
           </div>
-          <p className="text-xs text-gray-300 font-medium">
+          <p className="text-xs text-[#94A3B8]">
             High-priority emergency SOS broadcasting, dispatch telemetry console, and incident geo-fencing.
           </p>
         </div>
       </div>
 
+      <div className="bg-[#1E293B] border border-[#334155] rounded-xl p-4 flex items-center gap-3 text-xs text-[#94A3B8]">
+        <Info className="w-4 h-4 text-[#3B82F6] shrink-0" />
+        <span>This module is currently under active development and will be available in a future Terra release.</span>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-panel p-6 rounded-2xl border border-darkBorder space-y-4">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <Radio className="w-4 h-4 text-red-400" /> Live Dispatch Console Preview
+        <div className="card-slate p-6 space-y-3">
+          <h2 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-[#F59E0B]" /> Planned Capabilities
           </h2>
-          <div className="bg-[#07111F] p-4 rounded-xl border border-red-500/30 text-xs text-gray-300 space-y-2 font-mono">
-            <div className="text-red-400 font-bold">STATUS: TELEMETRY LISTENING (PORT 4000)</div>
-            <div>Active Emergency Broadcast Listeners: 3 Dispatch Centers</div>
-            <div>Average SOS Broadcast Latency: &lt; 45ms</div>
-          </div>
+          <ul className="space-y-2 text-xs text-[#94A3B8]">
+            <li>✓ Real-time Socket.IO SOS Telemetry Pipeline (Port 4000)</li>
+            <li>✓ 112 National Emergency Line Protocol Integration</li>
+            <li>✓ High-priority location broadcasting to nearby responders</li>
+          </ul>
         </div>
 
-        <div className="glass-panel p-6 rounded-2xl border border-darkBorder space-y-4">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <PhoneCall className="w-4 h-4 text-red-400" /> Emergency Hotline Integrations
+        <div className="card-slate p-6 space-y-3">
+          <h2 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#F59E0B]" /> Development Milestones
           </h2>
-          <div className="space-y-2 text-xs text-gray-300 font-medium">
-            <div className="p-3 rounded-xl bg-bg-secondary border border-darkBorder flex justify-between">
-              <span>National Emergency Number (112)</span>
-              <span className="text-emerald-400 font-bold">Connected</span>
+          <div className="space-y-2 text-xs text-[#94A3B8]">
+            <div className="flex justify-between border-b border-[#334155] pb-2">
+              <span>SOS Event PostGIS Schema</span>
+              <span className="text-[#16A34A] font-semibold">Complete</span>
             </div>
-            <div className="p-3 rounded-xl bg-bg-secondary border border-darkBorder flex justify-between">
-              <span>Bengaluru Traffic Police Dispatch</span>
-              <span className="text-emerald-400 font-bold">Connected</span>
+            <div className="flex justify-between">
+              <span>Dispatcher Console Portal</span>
+              <span className="text-[#F59E0B] font-semibold">In Progress</span>
             </div>
           </div>
         </div>
