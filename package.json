@@ -1,0 +1,15 @@
+{
+  "name": "waypoint-flowos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Waypoint Mobility Platform & FlowOS Core Architecture",
+  "scripts": {
+    "dev:api": "npm --prefix apps/api run dev",
+    "build:api": "npm --prefix apps/api run build",
+    "prisma:generate": "npm --prefix apps/api run prisma:generate",
+    "prisma:push": "npm --prefix apps/api run prisma:push"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}

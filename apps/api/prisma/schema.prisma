@@ -1,0 +1,317 @@
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+enum UserRole {
+  PASSENGER
+  DRIVER
+  ADMIN
+  DISPATCHER
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+}
+
+enum DriverStatus {
+  OFFLINE
+  ONLINE_IDLE
+  EN_ROUTE_PICKUP
+  IN_TRIP
+}
+
+enum VehicleComfortClass {
+  STANDARD
+  PREMIUM
+  ELECTRIC
+}
+
+enum OfferStatus {
+  SCHEDULED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum RequestStatus {
+  SEARCHING
+  MATCHED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum MatchStatus {
+  PROPOSED
+  ACCEPTED_BY_DRIVER
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationType {
+  RIDE_MATCHED
+  RIDE_STATE_CHANGE
+  CHAT_MESSAGE
+  SYSTEM
+  EMERGENCY
+}
+
+enum EmergencyStatus {
+  TRIGGERED
+  ACKNOWLEDGED
+  DISPATCHED
+  RESOLVED
+  FALSE_ALARM
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  firstName    String     @map("first_name")
+  lastName     String     @map("last_name")
+  phone        String     @unique
+  avatarUrl    String?    @map("avatar_url")
+  role         UserRole   @default(PASSENGER)
+  status       UserStatus @default(PENDING_VERIFICATION)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  sessions          UserSession[]
+  notifications     Notification[]
+  driverProfile     DriverProfile?
+  passengerProfile  PassengerProfile?
+  recurringCommutes RecurringCommute[]
+  givenRatings      RideRating[]       @relation("RaterRelation")
+  receivedRatings   RideRating[]       @relation("RateeRelation")
+  emergencyEvents   EmergencyEvent[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  ipAddress String?   @map("ip_address")
+  userAgent String?   @map("user_agent")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  title     String
+  body      String
+  type      NotificationType
+  readAt    DateTime?        @map("read_at")
+  payload   Json?
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model DriverProfile {
+  id               String       @id @default(uuid()) @db.Uuid
+  userId           String       @unique @map("user_id") @db.Uuid
+  licenseNumber    String       @unique @map("license_number")
+  licenseExpiry    DateTime     @map("license_expiry") @db.Date
+  isVerified       Boolean      @default(false) @map("is_verified")
+  trustScore       Decimal      @default(5.00) @map("trust_score") @db.Decimal(3, 2)
+  totalTrips       Int          @default(0) @map("total_trips")
+  cancellationRate Decimal      @default(0.000) @map("cancellation_rate") @db.Decimal(4, 3)
+  currentStatus    DriverStatus @default(OFFLINE) @map("current_status")
+  lastLocationTime DateTime?    @map("last_location_time")
+  geohash          String?
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicles     Vehicle[]
+  rideOffers   RideOffer[]
+  trajectories ActiveTripTrajectory[]
+
+  @@map("driver_profiles")
+}
+
+model Vehicle {
+  id            String              @id @default(uuid()) @db.Uuid
+  driverId      String              @map("driver_id") @db.Uuid
+  make          String
+  model         String
+  year          Int
+  color         String
+  plateNumber   String              @unique @map("plate_number")
+  totalCapacity Int                 @default(4) @map("total_capacity")
+  availableSeats Int                @default(4) @map("available_seats")
+  comfortClass  VehicleComfortClass @default(STANDARD) @map("comfort_class")
+  isActive      Boolean             @default(true) @map("is_active")
+  createdAt     DateTime            @default(now()) @map("created_at")
+
+  driver     DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  rideOffers RideOffer[]
+
+  @@map("vehicles")
+}
+
+model PassengerProfile {
+  id                    String   @id @default(uuid()) @db.Uuid
+  userId                String   @unique @map("user_id") @db.Uuid
+  trustScore            Decimal  @default(5.00) @map("trust_score") @db.Decimal(3, 2)
+  totalRides            Int      @default(0) @map("total_rides")
+  emergencyContactPhone String?  @map("emergency_contact_phone")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rideRequests RideRequest[]
+
+  @@map("passenger_profiles")
+}
+
+model RideOffer {
+  id                    String      @id @default(uuid()) @db.Uuid
+  driverId              String      @map("driver_id") @db.Uuid
+  vehicleId             String      @map("vehicle_id") @db.Uuid
+  originAddress         String      @map("origin_address")
+  destinationAddress    String      @map("destination_address")
+  routeGeohashes        String[]    @map("route_geohashes")
+  departureTime         DateTime    @map("departure_time")
+  flexibleWindowMinutes Int         @default(15) @map("flexible_window_minutes")
+  totalCapacity         Int         @default(4) @map("total_capacity")
+  availableCapacity     Int         @default(4) @map("available_capacity")
+  status                OfferStatus @default(SCHEDULED)
+  estimatedDurationSec  Int         @map("estimated_duration_sec")
+  estimatedDistanceMtr  Int         @map("estimated_distance_meters")
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
+
+  driver      DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  vehicle     Vehicle       @relation(fields: [vehicleId], references: [id])
+  rideMatches RideMatch[]
+
+  @@map("ride_offers")
+}
+
+model RideRequest {
+  id                     String        @id @default(uuid()) @db.Uuid
+  passengerId            String        @map("passenger_id") @db.Uuid
+  pickupAddress          String        @map("pickup_address")
+  dropoffAddress         String        @map("dropoff_address")
+  desiredDepartureTime   DateTime      @map("desired_departure_time")
+  timeFlexibilityMinutes Int           @default(15) @map("time_flexibility_minutes")
+  requestedSeats         Int           @default(1) @map("requested_seats")
+  maxDetourMinutes       Int           @default(10) @map("max_detour_minutes")
+  status                 RequestStatus @default(SEARCHING)
+  geohashPickup          String        @map("geohash_pickup")
+  geohashDropoff         String        @map("geohash_dropoff")
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
+
+  passenger   PassengerProfile @relation(fields: [passengerId], references: [id], onDelete: Cascade)
+  rideMatches RideMatch[]
+
+  @@map("ride_requests")
+}
+
+model RideMatch {
+  id                    String      @id @default(uuid()) @db.Uuid
+  rideOfferId           String      @map("ride_offer_id") @db.Uuid
+  rideRequestId         String      @map("ride_request_id") @db.Uuid
+  matchScore            Decimal     @map("match_score") @db.Decimal(5, 4)
+  routeSimilarityScore  Decimal     @map("route_similarity_score") @db.Decimal(5, 4)
+  estimatedPickupTime   DateTime    @map("estimated_pickup_time")
+  estimatedDropoffTime  DateTime    @map("estimated_dropoff_time")
+  detourDurationSeconds Int         @default(0) @map("detour_duration_seconds")
+  detourDistanceMeters  Int         @default(0) @map("detour_distance_meters")
+  status                MatchStatus @default(PROPOSED)
+  fareAmount            Decimal     @map("fare_amount") @db.Decimal(10, 2)
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
+
+  rideOffer        RideOffer              @relation(fields: [rideOfferId], references: [id], onDelete: Cascade)
+  rideRequest      RideRequest            @relation(fields: [rideRequestId], references: [id], onDelete: Cascade)
+  trajectories     ActiveTripTrajectory[]
+  rideRatings      RideRating[]
+  emergencyEvents  EmergencyEvent[]
+
+  @@map("ride_matches")
+}
+
+model ActiveTripTrajectory {
+  id             String   @id @default(uuid()) @db.Uuid
+  rideMatchId    String   @map("ride_match_id") @db.Uuid
+  driverId       String   @map("driver_id") @db.Uuid
+  recordedAt     DateTime @default(now()) @map("recorded_at")
+  speedKmh       Decimal? @map("speed_kmh") @db.Decimal(5, 2)
+  headingDegrees Decimal? @map("heading_degrees") @db.Decimal(5, 2)
+
+  rideMatch RideMatch     @relation(fields: [rideMatchId], references: [id], onDelete: Cascade)
+  driver    DriverProfile @relation(fields: [driverId], references: [id])
+
+  @@map("active_trip_trajectories")
+}
+
+model RecurringCommute {
+  id                      String   @id @default(uuid()) @db.Uuid
+  userId                  String   @map("user_id") @db.Uuid
+  userType                UserRole @map("user_type")
+  daysOfWeek              Int[]    @map("days_of_week")
+  preferredDepartureTime String   @map("preferred_departure_time")
+  isActive                Boolean  @default(true) @map("is_active")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("recurring_commutes")
+}
+
+model RideRating {
+  id                String   @id @default(uuid()) @db.Uuid
+  rideMatchId       String   @map("ride_match_id") @db.Uuid
+  raterId           String   @map("rater_id") @db.Uuid
+  rateeId           String   @map("ratee_id") @db.Uuid
+  rating            Int
+  punctualityRating Int?     @map("punctuality_rating")
+  safetyRating      Int?     @map("safety_rating")
+  reviewText        String?  @map("review_text")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  rideMatch RideMatch @relation(fields: [rideMatchId], references: [id], onDelete: Cascade)
+  rater     User      @relation("RaterRelation", fields: [raterId], references: [id])
+  ratee     User      @relation("RateeRelation", fields: [rateeId], references: [id])
+
+  @@map("ride_ratings")
+}
+
+model EmergencyEvent {
+  id          String          @id @default(uuid()) @db.Uuid
+  userId      String          @map("user_id") @db.Uuid
+  rideMatchId String?         @map("ride_match_id") @db.Uuid
+  status      EmergencyStatus @default(TRIGGERED)
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rideMatch RideMatch? @relation(fields: [rideMatchId], references: [id])
+
+  @@map("emergency_events")
+}
