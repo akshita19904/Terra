@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { globalErrorHandler } from './platform/middleware/errorHandler.js';
 import { registerRoutes } from './routes.js';
 import { initializeRealtimeGateway } from './platform/realtime/socketServer.js';
+import { initializeBackgroundJobs } from './platform/jobs/backgroundJobs.js';
 
 dotenv.config();
 
@@ -49,6 +50,9 @@ async function startServer() {
     
     // Attach Socket.IO Realtime Gateway to underlying Node.js HTTP server
     initializeRealtimeGateway(app.server);
+
+    // Initialize Background Scheduled Jobs
+    initializeBackgroundJobs();
 
     console.log(`🚀 Waypoint API & Terra Platform Kernel running on http://${HOST}:${PORT}`);
   } catch (err) {
