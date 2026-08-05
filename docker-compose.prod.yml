@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: terra-postgis
+    environment:
+      POSTGRES_USER: waypoint
+      POSTGRES_PASSWORD: waypoint_password
+      POSTGRES_DB: waypoint_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U waypoint -d waypoint_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: terra-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_prod_data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: terra-api
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      HOST: 0.0.0.0
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://waypoint:waypoint_password@postgres:5432/waypoint_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "waypoint_super_secret_flowos_jwt_key_2026"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: terra-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
