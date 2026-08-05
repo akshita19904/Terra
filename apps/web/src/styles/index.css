@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwindcss base;
+@tailwindcss components;
+@tailwindcss utilities;
 
 @layer base {
   :root {
@@ -16,8 +18,8 @@
   }
 
   body {
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
+    background-color: #0F172A;
+    color: #F8FAFC;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -65,7 +67,7 @@
   border-radius: 0.5rem;
   transition: all 150ms ease-in-out;
   display: inline-flex;
-  items-center: center;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
@@ -84,7 +86,7 @@
   border-radius: 0.5rem;
   transition: all 150ms ease-in-out;
   display: inline-flex;
-  items-center: center;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
