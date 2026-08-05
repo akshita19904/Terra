@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { LoginPage } from './pages/LoginPage';
+import { DevModeProvider } from './context/DevModeContext';
 
 export function App() {
   const [user, setUser] = useState<any>(null);
@@ -8,7 +9,6 @@ export function App() {
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    // Read persisted token & user session on mount
     const savedToken = localStorage.getItem('terra_token');
     const savedUser = localStorage.getItem('terra_user');
 
@@ -44,13 +44,15 @@ export function App() {
     );
   }
 
-  // Auth Guard: Unauthenticated users are redirected to LoginPage
-  if (!token || !user) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
-  }
-
-  // Protected App Shell
-  return <Dashboard user={user} onLogout={handleLogout} />;
+  return (
+    <DevModeProvider>
+      {!token || !user ? (
+        <LoginPage onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <Dashboard user={user} onLogout={handleLogout} />
+      )}
+    </DevModeProvider>
+  );
 }
 
 export default App;
