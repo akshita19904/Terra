@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Users, ShieldAlert, Sparkles, MapPin, Navigation, Home, Briefcase, Clock, ChevronRight, Check } from 'lucide-react';
+import { Search, Users, ShieldAlert, Sparkles, MapPin, Navigation, Home, Briefcase, Clock, ChevronRight, AlertCircle } from 'lucide-react';
 import { DateTimePicker } from '../common/DateTimePicker';
 
 interface RequestWizardProps {
@@ -24,6 +24,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
   );
   const [requestedSeats, setRequestedSeats] = useState(2);
   const [maxDetourMinutes, setMaxDetourMinutes] = useState(10);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const resolveIndiaCoordinates = (address: string, isOrigin: boolean) => {
     const lower = address.toLowerCase();
@@ -41,13 +42,24 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    setValidationError(null);
+
+    // Validate that departure time is strictly in the future
+    const selectedDate = new Date(departureTime);
+    const now = new Date();
+
+    if (selectedDate.getTime() < now.getTime() - 60000) {
+      setValidationError('This departure time has already passed. Please select a valid future time slot.');
+      return;
+    }
+
     const pickupCoords = resolveIndiaCoordinates(pickup, true);
     const dropoffCoords = resolveIndiaCoordinates(dropoff, false);
 
     onFindMatches({
       pickup: { ...pickupCoords, address: pickup },
       dropoff: { ...dropoffCoords, address: dropoff },
-      desiredDepartureTime: new Date(departureTime).toISOString(),
+      desiredDepartureTime: selectedDate.toISOString(),
       requestedSeats,
       maxDetourMinutes,
     });
@@ -81,6 +93,14 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
         </div>
       </div>
 
+      {/* Validation Error Banner */}
+      {validationError && (
+        <div className="bg-amber-950/70 border border-amber-500/40 rounded-xl p-3 text-xs text-amber-200 flex items-center gap-2" role="alert">
+          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+          <span>{validationError}</span>
+        </div>
+      )}
+
       {/* Step 1: Pickup & Destination */}
       {step === 1 && (
         <div className="space-y-4 animate-in fade-in duration-150">
@@ -92,7 +112,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
               <button
                 type="button"
                 onClick={handleUseCurrentLocation}
-                className="text-[11px] text-mint font-bold hover:underline flex items-center gap-1"
+                className="text-[11px] text-mint font-bold hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Navigation className="w-3 h-3" /> Current Location
               </button>
@@ -132,7 +152,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
                     key={loc.label}
                     type="button"
                     onClick={() => setDropoff(loc.address)}
-                    className="px-3 py-1.5 rounded-lg bg-bg-secondary hover:bg-mint/15 hover:border-mint/30 border border-darkBorder text-xs text-gray-200 font-semibold flex items-center gap-1.5 transition-all"
+                    className="px-3 py-1.5 rounded-lg bg-bg-secondary hover:bg-mint/15 hover:border-mint/30 border border-darkBorder text-xs text-gray-200 font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                   >
                     <Icon className="w-3 h-3 text-mint" />
                     <span>{loc.label}</span>
@@ -174,7 +194,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
                   key={num}
                   type="button"
                   onClick={() => setRequestedSeats(num)}
-                  className={`py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                  className={`py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     requestedSeats === num
                       ? 'bg-mint text-bg-primary border-mint shadow-xs'
                       : 'bg-bg-secondary text-gray-300 border-darkBorder hover:border-mint/30'
@@ -190,7 +210,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="w-1/3 py-3 rounded-xl bg-bg-secondary text-gray-300 hover:text-white border border-darkBorder font-bold text-xs"
+              className="w-1/3 py-3 rounded-xl bg-bg-secondary text-gray-300 hover:text-white border border-darkBorder font-bold text-xs cursor-pointer"
             >
               Back
             </button>
@@ -233,7 +253,7 @@ export const RequestWizard: React.FC<RequestWizardProps> = ({ onFindMatches, isL
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="w-1/3 py-3 rounded-xl bg-bg-secondary text-gray-300 hover:text-white border border-darkBorder font-bold text-xs"
+              className="w-1/3 py-3 rounded-xl bg-bg-secondary text-gray-300 hover:text-white border border-darkBorder font-bold text-xs cursor-pointer"
             >
               Back
             </button>
