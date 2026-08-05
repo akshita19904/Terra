@@ -8,7 +8,12 @@ import { ConfirmationModal } from '../components/common/ConfirmationModal';
 import { ToastContainer, ToastMessage } from '../components/common/Toast';
 import { CandidateMatch } from '../types';
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  user?: any;
+  onLogout?: () => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const [isRealtimeConnected] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [candidates, setCandidates] = useState<CandidateMatch[]>([]);
@@ -28,6 +33,51 @@ export const Dashboard: React.FC = () => {
     address: 'Brigade El Dorado, Aerospace Park, Bengaluru',
   });
 
+  const baseCandidates = [
+    {
+      offerId: 'offer_in_1',
+      driverId: 'drv_in_1',
+      driverName: 'Aarav Sharma',
+      driverTrustScore: 4.95,
+      vehicleMakeModel: 'Tata Nexon EV (Electric)',
+      availableCapacity: 3,
+      routeSimilarityScore: 0.96,
+      estimatedDetourSeconds: 120, // 2 mins detour
+      estimatedDetourMeters: 900,
+      estimatedPickupTime: new Date(Date.now() + 8 * 60000).toISOString(),
+      estimatedDropoffTime: new Date(Date.now() + 28 * 60000).toISOString(),
+      estimatedFare: 180,
+    },
+    {
+      offerId: 'offer_in_2',
+      driverId: 'drv_in_2',
+      driverName: 'Priya Patel',
+      driverTrustScore: 4.88,
+      vehicleMakeModel: 'Hyundai Creta SX (Petrol)',
+      availableCapacity: 2,
+      routeSimilarityScore: 0.89,
+      estimatedDetourSeconds: 360, // 6 mins detour
+      estimatedDetourMeters: 2700,
+      estimatedPickupTime: new Date(Date.now() + 12 * 60000).toISOString(),
+      estimatedDropoffTime: new Date(Date.now() + 35 * 60000).toISOString(),
+      estimatedFare: 240,
+    },
+    {
+      offerId: 'offer_in_3',
+      driverId: 'drv_in_3',
+      driverName: 'Rohan Verma',
+      driverTrustScore: 4.82,
+      vehicleMakeModel: 'Mahindra XUV400 (Electric)',
+      availableCapacity: 3,
+      routeSimilarityScore: 0.84,
+      estimatedDetourSeconds: 540, // 9 mins detour
+      estimatedDetourMeters: 4100,
+      estimatedPickupTime: new Date(Date.now() + 16 * 60000).toISOString(),
+      estimatedDropoffTime: new Date(Date.now() + 40 * 60000).toISOString(),
+      estimatedFare: 210,
+    },
+  ];
+
   const addToast = (type: ToastMessage['type'], title: string, message: string) => {
     const id = `toast_${Date.now()}`;
     setToasts((prev) => [...prev, { id, type, title, message }]);
@@ -45,57 +95,37 @@ export const Dashboard: React.FC = () => {
     if (payload.pickup) setCurrentOrigin(payload.pickup);
     if (payload.dropoff) setCurrentDest(payload.dropoff);
 
+    const maxDetourMins = payload.maxDetourMinutes || 10;
+    const maxDetourSecs = maxDetourMins * 60;
+
+    console.log(`[MatchingEngine] Evaluating request with maxDetourMinutes: ${maxDetourMins} (${maxDetourSecs}s)`);
+
     setTimeout(() => {
-      setCandidates([
-        {
-          offerId: 'offer_in_1',
-          driverId: 'drv_in_1',
-          driverName: 'Aarav Sharma',
-          driverTrustScore: 4.95,
-          vehicleMakeModel: 'Tata Nexon EV (Electric)',
-          availableCapacity: 3,
-          matchScore: 0.9480,
-          routeSimilarityScore: 0.96,
-          estimatedDetourSeconds: 240,
-          estimatedDetourMeters: 1800,
-          estimatedPickupTime: new Date(Date.now() + 8 * 60000).toISOString(),
-          estimatedDropoffTime: new Date(Date.now() + 28 * 60000).toISOString(),
-          estimatedFare: 180,
-        },
-        {
-          offerId: 'offer_in_2',
-          driverId: 'drv_in_2',
-          driverName: 'Priya Patel',
-          driverTrustScore: 4.88,
-          vehicleMakeModel: 'Hyundai Creta SX (Petrol)',
-          availableCapacity: 2,
-          matchScore: 0.8820,
-          routeSimilarityScore: 0.89,
-          estimatedDetourSeconds: 380,
-          estimatedDetourMeters: 2900,
-          estimatedPickupTime: new Date(Date.now() + 12 * 60000).toISOString(),
-          estimatedDropoffTime: new Date(Date.now() + 35 * 60000).toISOString(),
-          estimatedFare: 240,
-        },
-        {
-          offerId: 'offer_in_3',
-          driverId: 'drv_in_3',
-          driverName: 'Rohan Verma',
-          driverTrustScore: 4.82,
-          vehicleMakeModel: 'Mahindra XUV400 (Electric)',
-          availableCapacity: 3,
-          matchScore: 0.8350,
-          routeSimilarityScore: 0.84,
-          estimatedDetourSeconds: 450,
-          estimatedDetourMeters: 3400,
-          estimatedPickupTime: new Date(Date.now() + 16 * 60000).toISOString(),
-          estimatedDropoffTime: new Date(Date.now() + 40 * 60000).toISOString(),
-          estimatedFare: 210,
-        },
-      ]);
+      const validCandidates = baseCandidates
+        .filter((c) => c.estimatedDetourSeconds <= maxDetourSecs)
+        .map((c) => {
+          const detourScore = Math.max(0, 1 - c.estimatedDetourSeconds / maxDetourSecs);
+          const trustScoreNorm = c.driverTrustScore / 5.0;
+
+          const matchScore = Number(
+            (0.35 * c.routeSimilarityScore + 0.25 * detourScore + 0.25 * 0.9 + 0.15 * trustScoreNorm).toFixed(4)
+          );
+
+          return {
+            ...c,
+            matchScore,
+          };
+        })
+        .sort((a, b) => b.matchScore - a.matchScore);
+
+      setCandidates(validCandidates);
       setIsLoading(false);
-      addToast('success', 'Optimization Sweep Complete', 'Ranked 3 candidates for your Indian route.');
-    }, 900);
+      addToast(
+        'success',
+        'Optimization Sweep Complete',
+        `Evaluated ${validCandidates.length} candidate(s) within ${maxDetourMins} min detour limit.`
+      );
+    }, 400);
   };
 
   const handleConfirmMatch = (match: CandidateMatch) => {
@@ -113,7 +143,12 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary text-gray-100 flex flex-col font-sans">
-      <Header onTriggerSos={handleTriggerSos} isRealtimeConnected={isRealtimeConnected} />
+      <Header
+        onTriggerSos={handleTriggerSos}
+        isRealtimeConnected={isRealtimeConnected}
+        user={user}
+        onLogout={onLogout}
+      />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         {/* Navigation Mode Tabs */}

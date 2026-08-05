@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Clock, ChevronDown } from 'lucide-react';
 
 interface DateTimePickerProps {
-  value: string; // ISO string or datetime-local format
+  value: string; // "YYYY-MM-DDTHH:mm" format in local time
   onChange: (val: string) => void;
   label?: string;
 }
@@ -10,30 +10,50 @@ interface DateTimePickerProps {
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, label }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Parse input string
-  const dateObj = value ? new Date(value) : new Date();
+  // Helper to parse local datetime string "YYYY-MM-DDTHH:mm" without UTC shifts
+  const parseLocalString = (str: string): Date => {
+    if (!str) return new Date();
+    const [datePart, timePart] = str.split('T');
+    if (!datePart || !timePart) return new Date(str);
 
-  // Format display string e.g. "Wed, 5 Aug 2026 at 15:00"
-  const formattedDisplay = dateObj.toLocaleDateString('en-IN', {
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  };
+
+  // Helper to format Date into "YYYY-MM-DDTHH:mm" local string
+  const formatLocalString = (d: Date): string => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+  };
+
+  const currentDate = parseLocalString(value);
+
+  // Format display string e.g. "Wed, 5 Aug • 16:00" in 24-hour local time
+  const formattedDatePart = currentDate.toLocaleDateString('en-IN', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
   });
+  const formattedHours = String(currentDate.getHours()).padStart(2, '0');
+  const formattedMinutes = String(currentDate.getMinutes()).padStart(2, '0');
+  const formattedDisplay = `${formattedDatePart} • ${formattedHours}:${formattedMinutes}`;
 
   const handleDateSelect = (daysFromNow: number) => {
     const nextDate = new Date();
     nextDate.setDate(nextDate.getDate() + daysFromNow);
-    nextDate.setHours(dateObj.getHours(), dateObj.getMinutes());
-    onChange(nextDate.toISOString().slice(0, 16));
+    nextDate.setHours(currentDate.getHours(), currentDate.getMinutes());
+    onChange(formatLocalString(nextDate));
   };
 
   const handleTimeSelect = (hour: number, minute: number) => {
-    const nextDate = new Date(dateObj);
+    const nextDate = new Date(currentDate);
     nextDate.setHours(hour, minute);
-    onChange(nextDate.toISOString().slice(0, 16));
+    onChange(formatLocalString(nextDate));
   };
 
   return (
@@ -55,7 +75,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       >
         <span className="flex items-center gap-2 font-medium">
           <CalendarIcon className="w-4 h-4 text-mint shrink-0" aria-hidden="true" />
-          <span>{formattedDisplay}</span>
+          <span className="font-mono text-gray-100">{formattedDisplay}</span>
         </span>
         <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -103,9 +123,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
           <div>
             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-2">
-              Select Time
+              Select Departure Time (24-Hour Local)
             </span>
-            <div className="grid grid-cols-4 gap-1.5 max-h-32 overflow-y-auto pr-1">
+            <div className="grid grid-cols-4 gap-1.5 max-h-36 overflow-y-auto pr-1">
               {[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((h) => (
                 <button
                   key={h}
@@ -115,8 +135,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
                     setIsOpen(false);
                   }}
                   className={`py-1.5 rounded-md text-[11px] font-mono border transition-all ${
-                    dateObj.getHours() === h
-                      ? 'bg-mint text-bg-primary border-mint font-bold'
+                    currentDate.getHours() === h
+                      ? 'bg-mint text-bg-primary border-mint font-extrabold shadow-sm'
                       : 'bg-bg-primary/70 text-gray-300 border-darkBorder hover:border-mint/40'
                   }`}
                 >

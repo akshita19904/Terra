@@ -1,12 +1,18 @@
 import React from 'react';
-import { Compass, AlertTriangle, Zap, WifiOff } from 'lucide-react';
+import { Compass, AlertTriangle, Zap, WifiOff, LogOut } from 'lucide-react';
 
 interface HeaderProps {
   onTriggerSos: () => void;
   isRealtimeConnected: boolean;
+  user?: { firstName?: string; lastName?: string; email?: string } | null;
+  onLogout?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onTriggerSos, isRealtimeConnected }) => {
+export const Header: React.FC<HeaderProps> = ({ onTriggerSos, isRealtimeConnected, user, onLogout }) => {
+  const firstName = user?.firstName || 'John';
+  const lastName = user?.lastName || 'Doe';
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
   return (
     <header className="w-full glass-panel border-b border-darkBorder px-6 py-4 flex items-center justify-between sticky top-0 z-50">
       <div className="flex items-center gap-3">
@@ -28,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ onTriggerSos, isRealtimeConnecte
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Real-time Status Badge (Icon + Text non-color dual signal) */}
+        {/* Real-time Status Badge */}
         <div
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold ${
             isRealtimeConnected
@@ -56,13 +62,26 @@ export const Header: React.FC<HeaderProps> = ({ onTriggerSos, isRealtimeConnecte
           <span>Emergency SOS</span>
         </button>
 
-        {/* User Profile Avatar */}
-        <div
-          className="w-9 h-9 rounded-full bg-bg-secondary border border-darkBorder flex items-center justify-center text-xs font-extrabold text-mint shadow-sm"
-          aria-label="User Profile: John Doe"
-          role="img"
-        >
-          JD
+        {/* User Profile Avatar with Initials */}
+        <div className="flex items-center gap-2">
+          <div
+            className="w-9 h-9 rounded-full bg-mint/15 border border-mint/40 flex items-center justify-center text-xs font-extrabold text-mint shadow-sm"
+            aria-label={`User Profile: ${firstName} ${lastName}`}
+            role="img"
+          >
+            {initials}
+          </div>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+              aria-label="Log out of session"
+              title="Log Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>
