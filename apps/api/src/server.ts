@@ -5,6 +5,7 @@ import fastifyCookie from '@fastify/cookie';
 import dotenv from 'dotenv';
 import { globalErrorHandler } from './platform/middleware/errorHandler.js';
 import { registerRoutes } from './routes.js';
+import { initializeRealtimeGateway } from './platform/realtime/socketServer.js';
 
 dotenv.config();
 
@@ -45,7 +46,11 @@ async function startServer() {
 
   try {
     await app.listen({ port: PORT, host: HOST });
-    console.log(`🚀 Waypoint API & FlowOS Kernel running on http://${HOST}:${PORT}`);
+    
+    // Attach Socket.IO Realtime Gateway to underlying Node.js HTTP server
+    initializeRealtimeGateway(app.server);
+
+    console.log(`🚀 Waypoint API & Terra Platform Kernel running on http://${HOST}:${PORT}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);
